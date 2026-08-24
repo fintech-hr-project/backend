@@ -3,15 +3,25 @@ package com.example.fintechr.repository;
 import com.example.fintechr.model.Employee;
 import com.example.fintechr.model.enums.Status;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import com.example.fintechr.service.EmployeeService;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-class EmployeeRepositoryTest {
-
+@ExtendWith(MockitoExtension.class)
+public class EmployeeServiceTest {
+    @Mock
     private EmployeeRepository repository;
+    @InjectMocks
+    private EmployeeService service;
 
     @Test
     void shouldReturnAllEmployees() {
@@ -21,11 +31,12 @@ class EmployeeRepositoryTest {
                 createEmployee(3L, "Alice", "alice.inwonder@email.com")
         );
 
-        repository = new EmployeeRepository(employees);
+        when(repository.findAll()).thenReturn(employees);
 
-        var result = repository.findAll();
+        var result = service.getAll();
 
         assertEquals(employees, result);
+        verify(repository).findAll();
     }
 
     private Employee createEmployee(Long id, String name, String email) {
