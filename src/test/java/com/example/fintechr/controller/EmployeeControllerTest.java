@@ -3,9 +3,8 @@ package com.example.fintechr.controller;
 import com.example.fintechr.model.Employee;
 import com.example.fintechr.model.enums.Status;
 import com.example.fintechr.service.EmployeeService;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,10 +17,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(MockitoExtension.class)
-@RequiredArgsConstructor
+@WebMvcTest(EmployeeController.class)
 public class EmployeeControllerTest {
-    private final MockMvc mockMvc;
+    @Autowired
+    private MockMvc mockMvc;
     @MockitoBean
     private EmployeeService service;
 
