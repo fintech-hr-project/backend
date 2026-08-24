@@ -1,13 +1,13 @@
-package com.example.fintechr.repository;
+package com.example.fintechr.service;
 
 import com.example.fintechr.model.Employee;
 import com.example.fintechr.model.enums.Status;
+import com.example.fintechr.repository.EmployeeRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import com.example.fintechr.service.EmployeeService;
 
 import java.math.BigDecimal;
 import java.util.List;
