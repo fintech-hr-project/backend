@@ -7,7 +7,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import com.example.fintechr.repository.EmployeeRepository;
 import com.example.fintechr.service.EmployeeService;
 
 import java.math.BigDecimal;
