@@ -55,7 +55,7 @@ public class EmployeeControllerTest {
                 .contentType("application/json")
                 .content(employeeJson))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.length()").value(1));
+                .andExpect(content().json(employeeJson));
     }
 
 
