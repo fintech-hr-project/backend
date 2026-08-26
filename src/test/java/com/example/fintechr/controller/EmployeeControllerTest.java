@@ -49,7 +49,11 @@ public class EmployeeControllerTest {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        mockMvc.perform(post("/employees").contentType("application/json").content(objectMapper.writeValueAsString(employee)))
+        var employeeJson = objectMapper.writeValueAsString(employee)
+
+        mockMvc.perform(post("/employees")
+                .contentType("application/json")
+                .content(employeeJson))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.length()").value(1));
     }
