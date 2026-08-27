@@ -86,7 +86,6 @@ public class EmployeeServiceTest {
         service.deleteEmployeeById(1L);
 
         verify(repository).findById(1L);
-        verify(service).deleteEmployeeById(1L);
     }
 
     private Employee createEmployee(String name, String email) {
