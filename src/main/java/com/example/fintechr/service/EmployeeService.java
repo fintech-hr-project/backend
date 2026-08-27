@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +20,26 @@ public class EmployeeService {
     public Employee findEmployeeById(Long id) {
         var employee = employeeRepository.findById(id);
         return employee.orElseThrow(EmployeeNotFoundException::new);
+    }
+
+    public Employee updateEmployeeById(Long id, Employee updatedEmployee) {
+        var originalEmployee = findEmployeeById(id);
+        updatedEmployee = Employee.builder()
+                .id(originalEmployee.getId())
+                .name(orDefault(updatedEmployee.getName(), originalEmployee.getName()))
+                .email(orDefault(updatedEmployee.getEmail(), originalEmployee.getEmail()))
+                .phone(orDefault(updatedEmployee.getPhone(), originalEmployee.getPhone()))
+                .role(orDefault(updatedEmployee.getRole(), originalEmployee.getRole()))
+                .department(orDefault(updatedEmployee.getDepartment(), originalEmployee.getDepartment()))
+                .salary(orDefault(updatedEmployee.getSalary(), originalEmployee.getSalary()))
+                .city(orDefault(updatedEmployee.getCity(), originalEmployee.getCity()))
+                .status(orDefault(updatedEmployee.getStatus(), originalEmployee.getStatus()))
+                .build();
+        return employeeRepository.save(updatedEmployee);
+    }
+
+    private <T> T orDefault(T newValue, T fallback) {
+        return newValue == null ? fallback : newValue;
     }
 
     public Employee createEmployee(Employee employee) {
