@@ -56,7 +56,7 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    void givenValidEmployeeWhenUpdateEmployeeThenReturnUpdatedEmployee() {
+    void givenFullUpdateEmployeeWhenUpdateEmployeeThenReturnUpdatedEmployee() {
         var employee = createEmployee("John Doe", "john.email@email.com");
         var updatedEmployee = createEmployee("Alice", "alice@email.com");
 
@@ -72,8 +72,29 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    void givenEmployeeIdWhenFindEmployeeByIdThenReturnEmployee() {
+    void givenHalfUpdateEmployeeWhenUpdateEmployeeThenReturnUpdatedEmployee() {
         var employee = createEmployee("John Doe", "john.email@email.com");
+        var updatedEmployee = createUpdatedEmployee("Alice", "alice@email.com");
+
+        when(repository.findById(1L)).thenReturn(Optional.of(employee));
+
+        var finalEmployee = employee;
+        finalEmployee.setName(updatedEmployee.getName());
+        finalEmployee.setPhone(updatedEmployee.getPhone());
+        finalEmployee.setEmail(updatedEmployee.getEmail());
+
+        when(repository.save(finalEmployee)).thenReturn(finalEmployee);
+
+        var result = service.updateEmployeeById(1L, updatedEmployee);
+
+        assertEquals(finalEmployee, result);
+        verify(repository).findById(1L);
+        verify(repository).save(finalEmployee);
+    }
+
+    @Test
+    void givenEmployeeIdWhenFindEmployeeByIdThenReturnEmployee() {
+        var employee = createEmployee("John updatedEmployeeDoe", "john.email@email.com");
 
         when(repository.findById(1L)).thenReturn(Optional.of(employee));
 
@@ -105,6 +126,14 @@ public class EmployeeServiceTest {
                 .salary(new BigDecimal("7500.00"))
                 .city("São Paulo")
                 .status(Status.HIRED)
+                .build();
+    }
+
+    private Employee createUpdatedEmployee(String name, String email) {
+        return Employee.builder()
+                .name(name)
+                .email(email)
+                .phone("11999999998")
                 .build();
     }
 }
