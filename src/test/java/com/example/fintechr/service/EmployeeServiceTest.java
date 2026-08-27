@@ -86,7 +86,9 @@ public class EmployeeServiceTest {
         service.deleteEmployeeById(1L);
 
         verify(repository).findById(1L);
-      
+    }
+
+    @Test
     void givenValidEmployeeWhenReplaceEmployeeThenReturnUpdatedEmployee() {
         var employee = createEmployee("John Doe", "john.email@email.com");
         employee.setId(1L);
