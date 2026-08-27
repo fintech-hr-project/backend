@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
@@ -17,6 +18,12 @@ public class EmployeeRepository {
 
     public List<Employee> findAll() {
         return employees;
+    }
+
+    public Optional<Employee> findById(Long id) {
+        return employees.stream()
+                .filter(employee -> employee.getId().equals(id))
+                .findFirst();
     }
 
     public Employee save(Employee employee) {
