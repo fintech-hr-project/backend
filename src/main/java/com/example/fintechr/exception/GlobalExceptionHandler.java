@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -40,24 +39,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex, WebRequest request) {
-        Map<String, String> fieldErrors = new LinkedHashMap<>();
-        for (FieldError fe : ex.getBindingResult().getFieldErrors()) {
-            fieldErrors.put(fe.getField(), fe.getDefaultMessage());
-        }
-        log.warn("Validation failed for {}: {}", request.getDescription(false), fieldErrors);
-
-        var error = ErrorResponse.builder()
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                .message("Validation failed: " + fieldErrors)
-                .path(request.getDescription(false).replace("uri=", ""))
-                .build();
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-    }
-
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleUnreadableBody(HttpMessageNotReadableException ex, WebRequest request) {
         String message = "Malformed JSON request";
@@ -68,7 +49,7 @@ public class GlobalExceptionHandler {
 
             String field = ife.getPath().isEmpty()
                     ? ife.getTargetType().getSimpleName()
-                    : ife.getPath().get(ife.getPath().size() - 1).getFieldName();
+                    : ife.getPath().getLast().getFieldName();
 
             message = "Invalid value '%s' for field '%s'. Accepted values are: %s".formatted(
                     ife.getValue(),
