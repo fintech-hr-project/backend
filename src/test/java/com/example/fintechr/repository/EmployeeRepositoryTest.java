@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -47,9 +48,9 @@ class EmployeeRepositoryTest {
         repository.save(employee2);
         repository.save(employee3);
 
-        var result = repository.findById(1);
+        var result = repository.findById(1L);
 
-        assertEquals(employee1, result);
+        assertEquals(Optional.of(employee1), result);
     }
 
     private Employee createEmployee(String name, String email) {

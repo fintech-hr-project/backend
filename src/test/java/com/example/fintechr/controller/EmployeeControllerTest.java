@@ -1,5 +1,7 @@
 package com.example.fintechr.controller;
 
+import com.example.fintechr.exception.custom.EmployeeNotFoundException;
+import com.example.fintechr.exception.model.ErrorResponse;
 import com.example.fintechr.model.Employee;
 import com.example.fintechr.model.enums.Status;
 import com.example.fintechr.service.EmployeeService;
@@ -7,6 +9,7 @@ import com.example.fintechr.service.EmployeeService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -16,8 +19,7 @@ import java.util.List;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(EmployeeController.class)
 public class EmployeeControllerTest {
@@ -63,13 +65,26 @@ public class EmployeeControllerTest {
     void givenEmployeeIdWhenGetEmployeeThenReturnEmployee() throws Exception {
         var employee = createEmployee("Bob", "bob@email.com");
 
-        when(service.findEmployeeById(1)).thenReturn(employee);
+        when(service.findEmployeeById(1L)).thenReturn(employee);
 
         var employeeJson = objectMapper.writeValueAsString(employee);
 
         mockMvc.perform(get("/employees/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(employeeJson));
+    }
+
+    @Test
+    void givenNonExistentEmployeeIdWhenGetEmployeeThenReturnNotFound() throws Exception {
+        when(service.findEmployeeById(99L)).thenThrow(new EmployeeNotFoundException(99L));
+
+        mockMvc.perform(get("/employees/99"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.error").value("Not Found"))
+                .andExpect(jsonPath("$.message").value("Employee with id '99' could not be found"))
+                .andExpect(jsonPath("$.path").value("/employees/99"))
+                .andExpect(jsonPath("$.timestamp").exists());
     }
 
     private Employee createEmployee(String name, String email) {
