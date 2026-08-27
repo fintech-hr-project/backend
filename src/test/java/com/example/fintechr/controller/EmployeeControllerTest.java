@@ -94,8 +94,9 @@ public class EmployeeControllerTest {
 
     @Test
     void givenEmployeeIdWhenDeleteEmployeeThenReturnNoContent() throws Exception {
-        when(service.findEmployeeById(1L)).thenReturn(createEmployee("John Doe", "john.email@email.com"));
-        
+        var employee = createEmployee("John Doe", "john@email.com");
+        when(service.findEmployeeById(1L)).thenReturn(employee);
+
         doNothing().when(service).deleteEmployeeById(1L);
         
         mockMvc.perform(delete("/employees/1"))
