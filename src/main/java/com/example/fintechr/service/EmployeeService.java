@@ -45,4 +45,9 @@ public class EmployeeService {
     public Employee createEmployee(Employee employee) {
         return employeeRepository.save(employee);
     }
+
+    public Employee replaceEmployee(Employee employee) {
+        return employeeRepository.replace(employee)
+                .orElseThrow(() -> new EmployeeNotFoundException(employee.getId()));
+    }
 }
