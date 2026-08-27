@@ -104,7 +104,7 @@ public class EmployeeControllerTest {
     }
 
     @Test
-    void givenValidEmployeeWhenUpdateEmployeeThenReturnUpdatedEmployee() throws Exception {
+    void givenFullEmployeeUpdateWhenUpdateEmployeeThenReturnUpdatedEmployee() throws Exception {
         var updatedEmployee = createEmployee("Alice", "alice@email.com");
 
         when(service.updateEmployeeById(1L, updatedEmployee)).thenReturn(updatedEmployee);
@@ -115,6 +115,24 @@ public class EmployeeControllerTest {
                 .contentType("application/json")
                 .header("id", 1L)
                 .content(updatedEmployeeJson))
+                .andExpect(status().isOk())
+                .andExpect(content().json(updatedEmployeeJson));
+
+        verify(service).updateEmployeeById(1L, updatedEmployee);
+    }
+
+    @Test
+    void givenHalfEmployeeUpdateWhenUpdateEmployeeThenReturnUpdatedEmployee() throws Exception {
+        var updatedEmployee = createUpdateEmployee("Alice", "alice@email.com");
+
+        when(service.updateEmployeeById(1L, updatedEmployee)).thenReturn(updatedEmployee);
+
+        var updatedEmployeeJson = objectMapper.writeValueAsString(updatedEmployee);
+
+        mockMvc.perform(patch("/employees/1")
+                        .contentType("application/json")
+                        .header("id", 1L)
+                        .content(updatedEmployeeJson))
                 .andExpect(status().isOk())
                 .andExpect(content().json(updatedEmployeeJson));
 
@@ -141,6 +159,14 @@ public class EmployeeControllerTest {
                 .andExpect(jsonPath("$.timestamp").exists());
 
         verify(service).updateEmployeeById(99L, updatedEmployee);
+    }
+
+    private Employee createUpdateEmployee(String name, String email) {
+        return Employee.builder()
+                .name(name)
+                .email(email)
+                .phone("11999999998")
+                .build();
     }
 
     private Employee createEmployee(String name, String email) {
