@@ -32,4 +32,16 @@ public class EmployeeRepository {
 
         return employees.getLast();
     }
+
+    public Optional<Employee> replace(Employee employee) {
+        Optional<Employee> existingEmployee = findById(employee.getId());
+
+        if (existingEmployee.isEmpty()) {
+            return Optional.empty();
+        }
+
+        employees.remove(existingEmployee.get());
+        employees.add(employee);
+        return Optional.of(employee);
+    }
 }

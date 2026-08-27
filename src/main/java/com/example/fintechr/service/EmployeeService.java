@@ -26,13 +26,8 @@ public class EmployeeService {
         return employeeRepository.save(employee);
     }
 
-    public Employee updateEmployee(Employee employee) {
-        var existingEmployee = employeeRepository.findById(employee.getId());
-
-        if (existingEmployee.isEmpty()) {
-            throw new EmployeeNotFoundException(employee.getId());
-        }
-        
-        return employeeRepository.save(employee);
+    public Employee replaceEmployee(Employee employee) {
+        return employeeRepository.replace(employee)
+                .orElseThrow(() -> new EmployeeNotFoundException(employee.getId()));
     }
 }

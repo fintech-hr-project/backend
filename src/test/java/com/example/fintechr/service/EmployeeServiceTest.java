@@ -78,6 +78,33 @@ public class EmployeeServiceTest {
         verify(repository).findById(99L);
     }
 
+    @Test
+    void givenValidEmployeeWhenReplaceEmployeeThenReturnUpdatedEmployee() {
+        var employee = createEmployee("John Doe", "john.email@email.com");
+        employee.setId(1L);
+
+        when(repository.replace(employee)).thenReturn(Optional.of(employee));
+
+        var result = service.replaceEmployee(employee);
+
+        assertEquals(employee, result);
+        verify(repository).replace(employee);
+    }
+
+    @Test
+    void givenNonExistentEmployeeWhenReplaceEmployeeThenThrowEmployeeNotFoundException() {
+        var employee = createEmployee("John Doe", "john.email@email.com");
+        employee.setId(99L);
+
+        when(repository.replace(employee)).thenReturn(Optional.empty());
+
+        var exception = assertThrows(EmployeeNotFoundException.class,
+                () -> service.replaceEmployee(employee));
+
+        assertEquals("Employee with id '99' could not be found", exception.getMessage());
+        verify(repository).replace(employee);
+    }
+
     private Employee createEmployee(String name, String email) {
         return Employee.builder()
                 .name(name)

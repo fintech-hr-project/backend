@@ -53,6 +53,30 @@ class EmployeeRepositoryTest {
         assertEquals(Optional.of(employee1), result);
     }
 
+    @Test
+    void givenExistingEmployeeWhenReplaceThenReturnUpdatedEmployeeWrappedInOptional() {
+        var employee = createEmployee("John Doe", "john.email@email.com");
+        repository.save(employee);
+
+        var employeeAtualizado = createEmployee("John Doe Updated", "john.updated@email.com");
+        employeeAtualizado.setId(employee.getId());
+
+        var result = repository.replace(employeeAtualizado);
+
+        assertEquals(Optional.of(employeeAtualizado), result);
+        assertEquals(List.of(employeeAtualizado), repository.findAll());
+    }
+
+    @Test
+    void givenNonExistentEmployeeWhenReplaceThenReturnEmptyOptional() {
+        var UnexistentEmployee = createEmployee("Ghost", "ghost@email.com");
+        UnexistentEmployee.setId(99L);
+
+        var result = repository.replace(UnexistentEmployee);
+
+        assertEquals(Optional.empty(), result);
+    }
+
     private Employee createEmployee(String name, String email) {
         return Employee.builder()
                 .name(name)
