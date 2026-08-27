@@ -69,7 +69,8 @@ class EmployeeRepositoryTest {
 
         assertEquals(List.of(employee2, employee3), result);
     }
-    
+
+    @Test
     void givenExistingEmployeeWhenReplaceThenReturnUpdatedEmployeeWrappedInOptional() {
         var employee = createEmployee("John Doe", "john.email@email.com");
         repository.save(employee);
