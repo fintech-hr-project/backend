@@ -38,7 +38,8 @@ public class EmployeeRepository {
                 .filter(employee -> employee.getId().equals(id))
                 .findFirst()
                 .ifPresent(employees::remove);
-      
+    }
+        
     public Optional<Employee> replace(Employee employee) {
         Optional<Employee> existingEmployee = findById(employee.getId());
 
