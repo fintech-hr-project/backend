@@ -22,6 +22,28 @@ public class EmployeeService {
         return employee.orElseThrow(EmployeeNotFoundException::new);
     }
 
+    public Employee updateEmployeeById(Long id, Employee updatedEmployee) {
+        var originalEmployee = findEmployeeById(id);
+
+        updatedEmployee = Employee.builder()
+                .id(originalEmployee.getId())
+                .name(orDefault(updatedEmployee.getName(), originalEmployee.getName()))
+                .email(orDefault(updatedEmployee.getEmail(), originalEmployee.getEmail()))
+                .phone(orDefault(updatedEmployee.getPhone(), originalEmployee.getPhone()))
+                .role(orDefault(updatedEmployee.getRole(), originalEmployee.getRole()))
+                .department(orDefault(updatedEmployee.getDepartment(), originalEmployee.getDepartment()))
+                .salary(orDefault(updatedEmployee.getSalary(), originalEmployee.getSalary()))
+                .city(orDefault(updatedEmployee.getCity(), originalEmployee.getCity()))
+                .status(orDefault(updatedEmployee.getStatus(), originalEmployee.getStatus()))
+                .build();
+
+        return employeeRepository.replace(updatedEmployee).orElseThrow(() -> new EmployeeNotFoundException(id));
+    }
+
+    private <T> T orDefault(T newValue, T fallback) {
+        return newValue == null ? fallback : newValue;
+    }
+
     public Employee createEmployee(Employee employee) {
         return employeeRepository.save(employee);
     }

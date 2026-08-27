@@ -55,8 +55,45 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    void givenEmployeeIdWhenFindEmployeeByIdThenReturnEmployee() {
+    void givenFullUpdateEmployeeWhenUpdateEmployeeThenReturnUpdatedEmployee() {
         var employee = createEmployee("John Doe", "john.email@email.com");
+        var updatedEmployee = createEmployee("Alice", "alice@email.com");
+
+        when(repository.findById(1L)).thenReturn(Optional.of(employee));
+
+        when(repository.replace(updatedEmployee)).thenReturn(Optional.of(updatedEmployee));
+
+        var result = service.updateEmployeeById(1L, updatedEmployee);
+
+        assertEquals(updatedEmployee, result);
+        verify(repository).findById(1L);
+        verify(repository).replace(updatedEmployee);
+    }
+
+    @Test
+    void givenHalfUpdateEmployeeWhenUpdateEmployeeThenReturnUpdatedEmployee() {
+        var employee = createEmployee("John Doe", "john.email@email.com");
+        var updatedEmployee = createUpdatedEmployee("Alice", "alice@email.com");
+
+        when(repository.findById(1L)).thenReturn(Optional.of(employee));
+
+        var finalEmployee = employee;
+        finalEmployee.setName(updatedEmployee.getName());
+        finalEmployee.setPhone(updatedEmployee.getPhone());
+        finalEmployee.setEmail(updatedEmployee.getEmail());
+
+        when(repository.replace(finalEmployee)).thenReturn(Optional.of(finalEmployee));
+
+        var result = service.updateEmployeeById(1L, updatedEmployee);
+
+        assertEquals(finalEmployee, result);
+        verify(repository).findById(1L);
+        verify(repository).replace(finalEmployee);
+    }
+
+    @Test
+    void givenEmployeeIdWhenFindEmployeeByIdThenReturnEmployee() {
+        var employee = createEmployee("John updatedEmployeeDoe", "john.email@email.com");
 
         when(repository.findById(1L)).thenReturn(Optional.of(employee));
 
@@ -125,6 +162,14 @@ public class EmployeeServiceTest {
                 .salary(new BigDecimal("7500.00"))
                 .city("São Paulo")
                 .status(Status.HIRED)
+                .build();
+    }
+
+    private Employee createUpdatedEmployee(String name, String email) {
+        return Employee.builder()
+                .name(name)
+                .email(email)
+                .phone("11999999998")
                 .build();
     }
 }
