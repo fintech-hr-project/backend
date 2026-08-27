@@ -1,13 +1,15 @@
 package com.example.fintechr.controller;
 
+import com.example.fintechr.exception.custom.EmployeeNotFoundException;
+import com.example.fintechr.exception.model.ErrorResponse;
 import com.example.fintechr.model.Employee;
 import com.example.fintechr.model.enums.Status;
 import com.example.fintechr.service.EmployeeService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -17,9 +19,7 @@ import java.util.List;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(EmployeeController.class)
 public class EmployeeControllerTest {
@@ -27,9 +27,11 @@ public class EmployeeControllerTest {
     private MockMvc mockMvc;
     @MockitoBean
     private EmployeeService service;
+    @Autowired
+    private tools.jackson.databind.ObjectMapper objectMapper;
 
     @Test
-    void shouldReturnAllEmployees() throws Exception {
+    void givenEmployeesExistWhenGetAllEmployeesThenReturnAllEmployees() throws Exception {
         var employees = List.of(
                 createEmployee("John Doe", "john@email.com"),
                 createEmployee("Bob", "bob@email.com")
@@ -37,18 +39,18 @@ public class EmployeeControllerTest {
 
         when(service.getAll()).thenReturn(employees);
 
+        var employeesJson = objectMapper.writeValueAsString(employees);
+
         mockMvc.perform(get("/employees"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2));
+                .andExpect(content().json(employeesJson));
     }
 
     @Test
-    void shouldReturnSavedEmployee() throws Exception {
+    void givenValidEmployeeWhenCreateEmployeeThenReturnSavedEmployee() throws Exception {
         var employee = createEmployee("John Doe", "john@email.com");
 
         when(service.createEmployee(employee)).thenReturn(employee);
-
-        ObjectMapper objectMapper = new ObjectMapper();
 
         var employeeJson = objectMapper.writeValueAsString(employee);
 
@@ -59,6 +61,31 @@ public class EmployeeControllerTest {
                 .andExpect(content().json(employeeJson));
     }
 
+    @Test
+    void givenEmployeeIdWhenGetEmployeeThenReturnEmployee() throws Exception {
+        var employee = createEmployee("Bob", "bob@email.com");
+
+        when(service.findEmployeeById(1L)).thenReturn(employee);
+
+        var employeeJson = objectMapper.writeValueAsString(employee);
+
+        mockMvc.perform(get("/employees/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(employeeJson));
+    }
+
+    @Test
+    void givenNonExistentEmployeeIdWhenGetEmployeeThenReturnNotFound() throws Exception {
+        when(service.findEmployeeById(99L)).thenThrow(new EmployeeNotFoundException(99L));
+
+        mockMvc.perform(get("/employees/99"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.error").value("Not Found"))
+                .andExpect(jsonPath("$.message").value("Employee with id '99' could not be found"))
+                .andExpect(jsonPath("$.path").value("/employees/99"))
+                .andExpect(jsonPath("$.timestamp").exists());
+    }
 
     private Employee createEmployee(String name, String email) {
         return Employee.builder()
