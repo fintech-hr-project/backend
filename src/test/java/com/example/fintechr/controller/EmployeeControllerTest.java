@@ -101,7 +101,6 @@ public class EmployeeControllerTest {
         mockMvc.perform(delete("/employees/1"))
                 .andExpect(status().isNoContent());
 
-        verify(service).findEmployeeById(1L);
         verify(service).deleteEmployeeById(1L);
     }
 
