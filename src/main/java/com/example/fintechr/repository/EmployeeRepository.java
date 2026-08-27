@@ -29,6 +29,7 @@ public class EmployeeRepository {
     public Employee save(Employee employee) {
         employee.setId(idCounter.incrementAndGet());
         employees.add(employee);
+
         return employees.getLast();
     }
 }

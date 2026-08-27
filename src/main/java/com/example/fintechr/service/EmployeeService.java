@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +23,16 @@ public class EmployeeService {
     }
 
     public Employee createEmployee(Employee employee) {
+        return employeeRepository.save(employee);
+    }
+
+    public Employee updateEmployee(Employee employee) {
+        var existingEmployee = employeeRepository.findById(employee.getId());
+
+        if (existingEmployee.isEmpty()) {
+            throw new EmployeeNotFoundException(employee.getId());
+        }
+        
         return employeeRepository.save(employee);
     }
 }

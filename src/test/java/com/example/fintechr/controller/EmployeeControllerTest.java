@@ -1,7 +1,6 @@
 package com.example.fintechr.controller;
 
 import com.example.fintechr.exception.custom.EmployeeNotFoundException;
-import com.example.fintechr.exception.model.ErrorResponse;
 import com.example.fintechr.model.Employee;
 import com.example.fintechr.model.enums.Status;
 import com.example.fintechr.service.EmployeeService;
@@ -9,7 +8,6 @@ import com.example.fintechr.service.EmployeeService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
