@@ -24,6 +24,7 @@ public class EmployeeService {
 
     public Employee updateEmployeeById(Long id, Employee updatedEmployee) {
         var originalEmployee = findEmployeeById(id);
+
         updatedEmployee = Employee.builder()
                 .id(originalEmployee.getId())
                 .name(orDefault(updatedEmployee.getName(), originalEmployee.getName()))
@@ -35,7 +36,8 @@ public class EmployeeService {
                 .city(orDefault(updatedEmployee.getCity(), originalEmployee.getCity()))
                 .status(orDefault(updatedEmployee.getStatus(), originalEmployee.getStatus()))
                 .build();
-        return employeeRepository.save(updatedEmployee);
+
+        return employeeRepository.replace(updatedEmployee).orElseThrow(() -> new EmployeeNotFoundException(id));
     }
 
     private <T> T orDefault(T newValue, T fallback) {

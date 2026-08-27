@@ -33,15 +33,15 @@ public class EmployeeRepository {
         return employees.getLast();
     }
 
-    public Optional<Employee> replace(Employee employee) {
-        Optional<Employee> existingEmployee = findById(employee.getId());
+    public Optional<Employee> replace(Employee newEmployee) {
+        var oldEmployee = findById(newEmployee.getId());
 
-        if (existingEmployee.isEmpty()) {
+        if (oldEmployee.isEmpty())
             return Optional.empty();
-        }
 
-        employees.remove(existingEmployee.get());
-        employees.add(employee);
-        return Optional.of(employee);
+        employees.remove(oldEmployee.get());
+        employees.add(newEmployee);
+
+        return Optional.of(newEmployee);
     }
 }
