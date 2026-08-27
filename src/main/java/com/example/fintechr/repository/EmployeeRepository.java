@@ -33,6 +33,13 @@ public class EmployeeRepository {
         return employees.getLast();
     }
 
+    public void deleteById(Long id) {
+        employees.stream()
+                .filter(employee -> employee.getId().equals(id))
+                .findFirst()
+                .ifPresent(employees::remove);
+    }
+        
     public Optional<Employee> replace(Employee employee) {
         Optional<Employee> existingEmployee = findById(employee.getId());
 

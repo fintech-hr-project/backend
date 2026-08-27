@@ -26,6 +26,11 @@ public class EmployeeService {
         return employeeRepository.save(employee);
     }
 
+    public void deleteEmployeeById(Long id) {
+        findEmployeeById(id);
+        employeeRepository.deleteById(id);
+    }
+        
     public Employee replaceEmployee(Employee employee) {
         return employeeRepository.replace(employee)
                 .orElseThrow(() -> new EmployeeNotFoundException(employee.getId()));
