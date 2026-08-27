@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -98,6 +99,8 @@ public class EmployeeControllerTest {
                 .content(updatedEmployeeJson))
                 .andExpect(status().isOk())
                 .andExpect(content().json(updatedEmployeeJson));
+
+        verify(service).updateEmployeeById(1L, updatedEmployee);
     }
 
     @Test
@@ -118,6 +121,8 @@ public class EmployeeControllerTest {
                 .andExpect(jsonPath("$.message").value("Employee with id '99' could not be found"))
                 .andExpect(jsonPath("$.path").value("/employees/99"))
                 .andExpect(jsonPath("$.timestamp").exists());
+
+        verify(service).updateEmployeeById(99L, updatedEmployee);
     }
 
     private Employee createEmployee(String name, String email) {
