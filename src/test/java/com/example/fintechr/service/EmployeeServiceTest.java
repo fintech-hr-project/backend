@@ -61,13 +61,13 @@ public class EmployeeServiceTest {
 
         when(repository.findById(1L)).thenReturn(Optional.of(employee));
 
-        when(repository.save(updatedEmployee)).thenReturn(updatedEmployee);
+        when(repository.replace(updatedEmployee)).thenReturn(Optional.of(updatedEmployee));
 
         var result = service.updateEmployeeById(1L, updatedEmployee);
 
         assertEquals(updatedEmployee, result);
         verify(repository).findById(1L);
-        verify(repository).save(updatedEmployee);
+        verify(repository).replace(updatedEmployee);
     }
 
     @Test
@@ -82,13 +82,13 @@ public class EmployeeServiceTest {
         finalEmployee.setPhone(updatedEmployee.getPhone());
         finalEmployee.setEmail(updatedEmployee.getEmail());
 
-        when(repository.save(finalEmployee)).thenReturn(finalEmployee);
+        when(repository.replace(finalEmployee)).thenReturn(Optional.of(finalEmployee));
 
         var result = service.updateEmployeeById(1L, updatedEmployee);
 
         assertEquals(finalEmployee, result);
         verify(repository).findById(1L);
-        verify(repository).save(finalEmployee);
+        verify(repository).replace(finalEmployee);
     }
 
     @Test
