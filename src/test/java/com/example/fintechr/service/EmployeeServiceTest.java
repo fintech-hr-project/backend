@@ -78,6 +78,13 @@ public class EmployeeServiceTest {
         verify(repository).findById(99L);
     }
 
+    @Test
+    void givenEmployeeIdWhenDeleteEmployeeByIdThenVerifyRepositoryDeleteByIdCalled() {
+        service.deleteEmployeeById(1L);
+
+        verify(repository).deleteById(1L);
+    }
+
     private Employee createEmployee(String name, String email) {
         return Employee.builder()
                 .name(name)

@@ -53,6 +53,23 @@ class EmployeeRepositoryTest {
         assertEquals(Optional.of(employee1), result);
     }
 
+    @Test
+    void givenListOfEmployeesWhenDeleteByIdOneThenReturnListWithoutFirstEmployee() {
+        var employee1 = createEmployee("John Doe", "john.email@email.com");
+        var employee2 = createEmployee("Bob", "bob.ishere@email.com");
+        var employee3 = createEmployee("Alice", "alice.inwonder@email.com");
+
+        repository.save(employee1);
+        repository.save(employee2);
+        repository.save(employee3);
+
+        repository.deleteById(1L);
+
+        var result = repository.findAll();
+
+        assertEquals(List.of(employee2, employee3), result);
+    }
+
     private Employee createEmployee(String name, String email) {
         return Employee.builder()
                 .name(name)

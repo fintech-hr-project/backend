@@ -17,6 +17,7 @@ import java.util.List;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(EmployeeController.class)
@@ -83,6 +84,12 @@ public class EmployeeControllerTest {
                 .andExpect(jsonPath("$.message").value("Employee with id '99' could not be found"))
                 .andExpect(jsonPath("$.path").value("/employees/99"))
                 .andExpect(jsonPath("$.timestamp").exists());
+    }
+
+    @Test
+    void givenEmployeeIdWhenDeleteEmployeeThenReturnNoContent() throws Exception {
+        mockMvc.perform(delete("/employees/1"))
+                .andExpect(status().isNoContent());
     }
 
     private Employee createEmployee(String name, String email) {
