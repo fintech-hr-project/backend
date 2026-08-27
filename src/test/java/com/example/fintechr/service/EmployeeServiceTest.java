@@ -56,6 +56,22 @@ public class EmployeeServiceTest {
     }
 
     @Test
+    void givenValidEmployeeWhenUpdateEmployeeThenReturnUpdatedEmployee() {
+        var employee = createEmployee("John Doe", "john.email@email.com");
+        var updatedEmployee = createEmployee("Alice", "alice@email.com");
+
+        when(repository.findById(1L)).thenReturn(Optional.of(employee));
+
+        when(repository.save(updatedEmployee)).thenReturn(updatedEmployee);
+
+        var result = service.updateEmployeeById(1L, updatedEmployee);
+
+        assertEquals(updatedEmployee, result);
+        verify(repository).findById(1L);
+        verify(repository).save(updatedEmployee);
+    }
+
+    @Test
     void givenEmployeeIdWhenFindEmployeeByIdThenReturnEmployee() {
         var employee = createEmployee("John Doe", "john.email@email.com");
 
