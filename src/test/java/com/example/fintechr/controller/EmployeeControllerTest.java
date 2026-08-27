@@ -14,6 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -71,6 +73,8 @@ public class EmployeeControllerTest {
         mockMvc.perform(get("/employees/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(employeeJson));
+
+        verify(service).findEmployeeById(1L);
     }
 
     @Test
@@ -84,12 +88,21 @@ public class EmployeeControllerTest {
                 .andExpect(jsonPath("$.message").value("Employee with id '99' could not be found"))
                 .andExpect(jsonPath("$.path").value("/employees/99"))
                 .andExpect(jsonPath("$.timestamp").exists());
+        
+        verify(service).findEmployeeById(99L);
     }
 
     @Test
     void givenEmployeeIdWhenDeleteEmployeeThenReturnNoContent() throws Exception {
+        when(service.findEmployeeById(1L)).thenReturn(createEmployee("John Doe", "john.email@email.com"));
+        
+        doNothing().when(service).deleteEmployeeById(1L);
+        
         mockMvc.perform(delete("/employees/1"))
                 .andExpect(status().isNoContent());
+
+        verify(service).findEmployeeById(1L);
+        verify(service).deleteEmployeeById(1L);
     }
 
     private Employee createEmployee(String name, String email) {

@@ -80,8 +80,11 @@ public class EmployeeServiceTest {
 
     @Test
     void givenEmployeeIdWhenDeleteEmployeeByIdThenVerifyRepositoryDeleteByIdCalled() {
+        when(service.findEmployeeById(1L)).thenReturn(createEmployee("John Doe", "john.email@email.com"));
+
         service.deleteEmployeeById(1L);
 
+        verify(service).findEmployeeById(1L);
         verify(repository).deleteById(1L);
     }
 
