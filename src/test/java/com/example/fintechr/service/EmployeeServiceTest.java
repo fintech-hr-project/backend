@@ -24,7 +24,7 @@ public class EmployeeServiceTest {
     private EmployeeService service;
 
     @Test
-    void shouldReturnAllEmployees() {
+    void givenEmployeesExistWhenGetAllThenReturnAllEmployees() {
         var employees = List.of(
                 createEmployee("John Doe", "john.email@email.com"),
                 createEmployee("Bob", "bob.ishere@email.com"),
@@ -39,9 +39,8 @@ public class EmployeeServiceTest {
         verify(repository).findAll();
     }
 
-
     @Test
-    void shouldReturnSavedEmployee() {
+    void givenValidEmployeeWhenCreateEmployeeThenReturnSavedEmployee() {
         var employee1 = createEmployee("John Doe", "john.email@email.com");
 
         when(repository.save(employee1)).thenReturn(employee1);
@@ -50,6 +49,18 @@ public class EmployeeServiceTest {
 
         assertEquals(employee1, result);
         verify(repository).save(employee1);
+    }
+
+    @Test
+    void givenEmployeeIdWhenFindEmployeeByIdThenReturnEmployee() {
+        var employee = createEmployee("John Doe", "john.email@email.com");
+
+        when(repository.findById(1)).thenReturn(employee);
+
+        var result = service.findEmployeeById(1);
+
+        assertEquals(employee, result);
+        verify(repository).findAll();
     }
 
     private Employee createEmployee(String name, String email) {

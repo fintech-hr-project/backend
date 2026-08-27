@@ -3,7 +3,6 @@ package com.example.fintechr.controller;
 import com.example.fintechr.model.Employee;
 import com.example.fintechr.model.enums.Status;
 import com.example.fintechr.service.EmployeeService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(EmployeeController.class)
@@ -27,9 +25,11 @@ public class EmployeeControllerTest {
     private MockMvc mockMvc;
     @MockitoBean
     private EmployeeService service;
+    @Autowired
+    private tools.jackson.databind.ObjectMapper objectMapper;
 
     @Test
-    void shouldReturnAllEmployees() throws Exception {
+    void givenEmployeesExistWhenGetAllEmployeesThenReturnAllEmployees() throws Exception {
         var employees = List.of(
                 createEmployee("John Doe", "john@email.com"),
                 createEmployee("Bob", "bob@email.com")
@@ -37,18 +37,18 @@ public class EmployeeControllerTest {
 
         when(service.getAll()).thenReturn(employees);
 
+        var employeesJson = objectMapper.writeValueAsString(employees);
+
         mockMvc.perform(get("/employees"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2));
+                .andExpect(content().json(employeesJson));
     }
 
     @Test
-    void shouldReturnSavedEmployee() throws Exception {
+    void givenValidEmployeeWhenCreateEmployeeThenReturnSavedEmployee() throws Exception {
         var employee = createEmployee("John Doe", "john@email.com");
 
         when(service.createEmployee(employee)).thenReturn(employee);
-
-        ObjectMapper objectMapper = new ObjectMapper();
 
         var employeeJson = objectMapper.writeValueAsString(employee);
 
@@ -59,6 +59,18 @@ public class EmployeeControllerTest {
                 .andExpect(content().json(employeeJson));
     }
 
+    @Test
+    void givenEmployeeIdWhenGetEmployeeThenReturnEmployee() throws Exception {
+        var employee = createEmployee("Bob", "bob@email.com");
+
+        when(service.findEmployeeById(1)).thenReturn(employee);
+
+        var employeeJson = objectMapper.writeValueAsString(employee);
+
+        mockMvc.perform(get("/employees/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(employeeJson));
+    }
 
     private Employee createEmployee(String name, String email) {
         return Employee.builder()

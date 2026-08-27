@@ -14,7 +14,7 @@ class EmployeeRepositoryTest {
     private final EmployeeRepository repository = new EmployeeRepository();
 
     @Test
-    void shouldReturnAllEmployees() {
+    void givenMultipleEmployeesSavedWhenFindAllThenReturnAllEmployees() {
         var employee1 = createEmployee("John Doe", "john.email@email.com");
         var employee2 = createEmployee("Bob", "bob.ishere@email.com");
         var employee3 = createEmployee("Alice", "alice.inwonder@email.com");
@@ -29,10 +29,25 @@ class EmployeeRepositoryTest {
     }
 
     @Test
-    void shouldReturnSavedEmployee() {
+    void givenEmployeeWhenSaveThenReturnSavedEmployee() {
         var employee1 = createEmployee("John Doe", "john.email@email.com");
 
         var result = repository.save(employee1);
+
+        assertEquals(employee1, result);
+    }
+
+    @Test
+    void givenListOfEmployeesWhenFindByIdOneThenReturnFirstEmployee() {
+        var employee1 = createEmployee("John Doe", "john.email@email.com");
+        var employee2 = createEmployee("Bob", "bob.ishere@email.com");
+        var employee3 = createEmployee("Alice", "alice.inwonder@email.com");
+
+        repository.save(employee1);
+        repository.save(employee2);
+        repository.save(employee3);
+
+        var result = repository.findById(1);
 
         assertEquals(employee1, result);
     }
