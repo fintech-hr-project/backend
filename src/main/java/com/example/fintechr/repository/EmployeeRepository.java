@@ -29,6 +29,7 @@ public class EmployeeRepository {
     public Employee save(Employee employee) {
         employee.setId(idCounter.incrementAndGet());
         employees.add(employee);
+
         return employees.getLast();
     }
 
@@ -37,5 +38,16 @@ public class EmployeeRepository {
                 .filter(employee -> employee.getId().equals(id))
                 .findFirst()
                 .ifPresent(employees::remove);
+      
+    public Optional<Employee> replace(Employee employee) {
+        Optional<Employee> existingEmployee = findById(employee.getId());
+
+        if (existingEmployee.isEmpty()) {
+            return Optional.empty();
+        }
+
+        employees.remove(existingEmployee.get());
+        employees.add(employee);
+        return Optional.of(employee);
     }
 }
