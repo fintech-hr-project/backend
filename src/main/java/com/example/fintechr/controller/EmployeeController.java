@@ -31,6 +31,11 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.findEmployeeById(id));
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @RequestBody Employee updatedEmployee) {
+        return ResponseEntity.ok(employeeService.updateEmployeeById(id, updatedEmployee));
+    }
+
     @PostMapping
     public ResponseEntity<Employee> registerEmployee(@RequestBody Employee employee) {
         Employee createdEmployee = employeeService.createEmployee(employee);
