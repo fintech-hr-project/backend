@@ -31,4 +31,11 @@ public class EmployeeRepository {
         employees.add(employee);
         return employees.getLast();
     }
+
+    public void deleteById(Long id) {
+        employees.stream()
+                .filter(employee -> employee.getId().equals(id))
+                .findFirst()
+                .ifPresent(employees::remove);
+    }
 }
